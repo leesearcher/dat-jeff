@@ -815,6 +815,8 @@ public class DMRTopicModelXBeta extends LDAHyperXBeta {
                 argss.length > 2 ? InstanceList.load (new File(argss[2])) : null;
 
         DMRTopicModelXBeta lda = new DMRTopicModelXBeta (numTopics);
+
+        // TODO: Implement setSeed method
         lda.setSeed(Seed);
         //lda.defaultFeatureIndex=0;
         lda.setBurninPeriod(burnin);
