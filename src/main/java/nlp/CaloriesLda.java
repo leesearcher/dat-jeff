@@ -1,4 +1,4 @@
-package cc.mallet.topics;
+package nlp;
 
 import java.io.File;
 import java.io.IOException;

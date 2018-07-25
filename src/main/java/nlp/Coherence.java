@@ -1,4 +1,4 @@
-package cc.mallet.topics;
+package nlp;
 
 
 
