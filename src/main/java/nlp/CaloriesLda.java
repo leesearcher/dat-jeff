@@ -90,8 +90,8 @@ public static void main (String[] args) throws IOException {
     //lda.defaultFeatureIndex=0;
     lda.setBurninPeriod(burnin);
 	lda.setOptimizeInterval(optimInterval);
-	lda.saveStateInterval = 100;
-	lda.printLogLikelihood = true;
+	lda.setSaveStateInterval(100);
+	lda.setPrintLogLikelihood(true);
 	lda.setTopicDisplay(100, 10);
 	lda.setPseudoCount(pseudoCount);
 	lda.setSeededTopics(Arrays.asList("calories","calorie", "fat", "diet", "health", "healthy", "light", "fit", "cardio", "lean","protein" ));
@@ -101,7 +101,7 @@ public static void main (String[] args) throws IOException {
 	lda.save_thrshld = 9000 ;
 	//lda.save_thrshld =numIters-samples*optimInterval ;
 	lda.setTopicProportionFile(apath+"/topicProportions_");
-	lda.beta = 0.01; //never change
+	lda.setBeta(0.01);
 	//lda.dmrParameters.setParameter(0, 0, 0);
 	lda.estimate();
 	lda.writeParameters(new File(apath+"/dmr.parameters_"));
@@ -109,7 +109,7 @@ public static void main (String[] args) throws IOException {
 	
 	Coherence cohere = new Coherence();
 	
-	cohere.collectDocumentStatistics( lda.numTopics, 20, lda.numTypes,
+	cohere.collectDocumentStatistics( lda.numTopics(), 20, lda.numTypes(),
 			lda.getTypeTopicCounts() ,lda, apath, "train");
     //Perplexity perp = new Perplexity();
 	Perplexity.calc(lda);

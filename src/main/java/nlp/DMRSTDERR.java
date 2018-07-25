@@ -11,6 +11,7 @@ import cc.mallet.classify.MaxEnt;
 import cc.mallet.optimize.LimitedMemoryBFGS;
 import cc.mallet.optimize.OptimizationException;
 import cc.mallet.pipe.Noop;
+import cc.mallet.topics.DMROptimizable;
 import cc.mallet.types.FeatureCounter;
 
 import cc.mallet.types.Instance;
@@ -67,33 +68,33 @@ public class DMRSTDERR {
         if (model.parameterPipe == null) {
             model.parameterPipe = new Noop();
 
-            model.parameterPipe.setDataAlphabet(model.data.get(0).instance.getTargetAlphabet());
-            model.parameterPipe.setTargetAlphabet(model.topicAlphabet);
+            model.parameterPipe.setDataAlphabet(model.data().get(0).instance.getTargetAlphabet());
+            model.parameterPipe.setTargetAlphabet(model.topicAlphabet());
         }
 
         InstanceList parameterInstances = new InstanceList(model.parameterPipe);
 
         if (model.dmrParameters == null) {
-            model.dmrParameters = new MaxEnt(model.parameterPipe, new double[model.numFeatures * model.numTopics]);
+            model.dmrParameters = new MaxEnt(model.parameterPipe, new double[model.numFeatures * model.numTopics()]);
         }
 
 
 
         for (int doc : subSample) {
 
-            if (model.data.get(doc).instance.getTarget() == null) {
+            if (model.data().get(doc).instance.getTarget() == null) {
                 continue;
             }
 
-            FeatureCounter counter = new FeatureCounter(model.topicAlphabet);
+            FeatureCounter counter = new FeatureCounter(model.topicAlphabet());
 
-            for (int topic : model.data.get(doc).topicSequence.getFeatures()) {
+            for (int topic : model.data().get(doc).topicSequence.getFeatures()) {
                 counter.increment(topic);
             }
 
             // Put the real target in the data field, and the
             //  topic counts in the target field
-            parameterInstances.add( new Instance(model.data.get(doc).instance.getTarget(), counter.toFeatureVector(), null, null) );
+            parameterInstances.add( new Instance(model.data().get(doc).instance.getTarget(), counter.toFeatureVector(), null, null) );
 
         }
 
@@ -186,7 +187,7 @@ public class DMRSTDERR {
          */
 
 
-        sampleSize = model.data.size();//
+        sampleSize = model.data().size();//
         int numSamples= 1000;
         parameters_orig = model.dmrParameters.getParameters().clone();
         //orig_dmr = model.dmrParameters.setParameters(parameters);;
@@ -195,7 +196,7 @@ public class DMRSTDERR {
         unpacker(0,model);
         this.doc_list = new ArrayList<Integer>();
 
-        for (int doc = 0; doc < model.data.size(); doc++) {
+        for (int doc = 0; doc < model.data().size(); doc++) {
             this.doc_list.add(doc);
         }
 

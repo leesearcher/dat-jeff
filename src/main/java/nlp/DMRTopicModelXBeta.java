@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
-
-
-
+import java.util.List;
 
 
 //import jgibblda.Coherence;
@@ -18,13 +16,8 @@ import cc.mallet.pipe.Pipe;
 import cc.mallet.topics.DMROptimizable;
 import cc.mallet.topics.tui.DMRLoader;
 import cc.mallet.topics.tui.Perplexity;
-import cc.mallet.types.FeatureCounter;
-import cc.mallet.types.FeatureSequence;
-import cc.mallet.types.FeatureVector;
-import cc.mallet.types.Instance;
-import cc.mallet.types.InstanceList;
-import cc.mallet.types.LabelSequence;
-import cc.mallet.types.MatrixOps;
+import cc.mallet.types.*;
+import gnu.trove.TIntIntHashMap;
 
 @SuppressWarnings("deprecation")
 public class DMRTopicModelXBeta extends LDAHyperXBeta {
@@ -863,8 +856,49 @@ public class DMRTopicModelXBeta extends LDAHyperXBeta {
 
     }
 
+    public List<Topication> data() {
+        return data;
+    }
 
+    public Alphabet alphabet() {
+        return alphabet;
+    }
 
+    public LabelAlphabet topicAlphabet() {
+        return topicAlphabet;
+    }
+
+    public TIntIntHashMap[] getTypeTopicCounts() {
+        return typeTopicCounts;
+    }
+
+    public int numTopics() {
+        return numTopics;
+    }
+
+    public double[] alpha() {
+        return alpha;
+    }
+
+    public double beta() {
+        return beta;
+    }
+
+    public void setBeta(double beta) {
+        this.beta = beta;
+    }
+
+    public int numTypes() {
+        return numTypes;
+    }
+
+    public void setSaveStateInterval(int saveStateInterval) {
+        this.saveStateInterval = saveStateInterval;
+    }
+
+    public void setPrintLogLikelihood(boolean printLogLikelihood) {
+        this.printLogLikelihood = printLogLikelihood;
+    }
 
 
 }

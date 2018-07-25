@@ -76,7 +76,7 @@ public class Coherence {
 		kldistances KLdistances = KLfromUniform ( numTopics,  V,  phi );
 		double avg_klfrom_uniform= KLdistances.getAvgKlfromUniform();
 		double[] distFromUniform = KLdistances.getKlfromUniform();
-		TIntHashSet[] docWordSets = new TIntHashSet[model.data.size()]; //model.data.size();
+		TIntHashSet[] docWordSets = new TIntHashSet[model.data().size()]; //model.data().size();
 		
 		
 		
@@ -91,7 +91,7 @@ public class Coherence {
 		//Sort the topics
 		//now capture the top words of a topic.
 		for (int topic=0;topic<numTopics;topic++){
-		    ArrayList<Pair> wordsProbsList = new ArrayList<Pair>(); 
+		    ArrayList<Pair> wordsProbsList = new ArrayList<Pair>();
 		    TIntHashSet givenTopic = new TIntHashSet();
 	        for (int w = 0; w < V; w++){
 	            Pair p = new Pair(w, phi[topic][w], false);
@@ -111,12 +111,12 @@ public class Coherence {
 		
 		
 		//Created a HashSet for documents - may not be a good idea!!But I am restricting the number of words in the document has set.
-		for (int m_ = 0; m_ < model.data.size(); m_++){       	//model.data.size();
+		for (int m_ = 0; m_ < model.data().size(); m_++){       	//model.data().size();
 			
-			FeatureSequence fs = (FeatureSequence) model.data.get(m_).instance.getData();
+			FeatureSequence fs = (FeatureSequence) model.data().get(m_).instance.getData();
 			int N = fs.getLength();
 			
-        	//int N = data.docs.get(m_).length;       //model.data.;
+        	//int N = data.docs.get(m_).length;       //model.data().;
         	TIntHashSet givenDoc = new TIntHashSet();
         	for (int n = 0; n < N; n++){       		
         		//Fix
@@ -139,7 +139,7 @@ public class Coherence {
 			//Topic Loop
 			int[] indices = topicTopWords[topic];
 			Coherence[topic]=0;
-            for (int m = 0; m < model.data.size(); m++){
+            for (int m = 0; m < model.data().size(); m++){
             	//Document Loop Within Topic
             	TIntHashSet supportedWords = docWordSets[m];
 	            for (int i = 0; i < numTopWords; i++) {
@@ -179,8 +179,8 @@ public class Coherence {
             
             //int MaxWordPair_1=indices[0];
             //int MaxWordPair_2=indices[1];
-            String FirstWord = (String) model.alphabet.lookupObject(indices[0]) ; //data.localDict.getWord(indices[MaxWordPair_1]);
-            String SecondWord = (String) model.alphabet.lookupObject(indices[1]); //data.localDict.getWord(indices[MaxWordPair_2]);
+            String FirstWord = (String) model.alphabet().lookupObject(indices[0]) ; //data.localDict.getWord(indices[MaxWordPair_1]);
+            String SecondWord = (String) model.alphabet().lookupObject(indices[1]); //data.localDict.getWord(indices[MaxWordPair_2]);
             
             //System.out.println(topic+","+ FirstWord+":"+SecondWord + "," +Coherence[topic]+ "," +  distFromUniform[topic] +","+ topicCodocumentMatrices[topic][MaxWordPair_1][MaxWordPair_2] );
             System.out.println(topic+","+ FirstWord+":"+SecondWord + "," +Coherence[topic]+ "," +  distFromUniform[topic] );
@@ -303,14 +303,31 @@ public class Coherence {
 		results[1]=cosDivergence ;
 		return results;
 	}//end class DivergenceScores
-	
+
+	// NEW STUFF
+	private static class Pair<A, B, C> implements Comparable<Pair> {
+		A first;
+		B second;
+		C third;
+
+		public Pair(A first, B second, C third) {
+			this.first = first;
+			this.second = second;
+			this.third = third;
+		}
+
+		// TODO: Implement
+		public int compareTo(Pair pair) {
+			return 0;
+		}
+	}
 	
 }//end coherence
 		/**
 		kldistances KLdistances = KLfromUniform ( numTopics,  V,  phi );
 		double avg_klfrom_uniform= KLdistances.getAvgKlfromUniform();
 		double[] distFromUniform = KLdistances.getKlfromUniform();
-		TIntHashSet[] docWordSets = new TIntHashSet[model.data.size()]; //model.data.size();
+		TIntHashSet[] docWordSets = new TIntHashSet[model.data().size()]; //model.data().size();
 		
 		
 		
@@ -345,12 +362,12 @@ public class Coherence {
 		
 		
 		//Created a HashSet for documents - may not be a good idea!!But I am restricting the number of words in the document has set.
-		for (int m_ = 0; m_ < model.data.size(); m_++){       	//model.data.size();
+		for (int m_ = 0; m_ < model.data().size(); m_++){       	//model.data().size();
 			
-			FeatureSequence fs = (FeatureSequence) model.data.get(m_).instance.getData();
+			FeatureSequence fs = (FeatureSequence) model.data().get(m_).instance.getData();
 			int N = fs.getLength();
 			
-        	//int N = data.docs.get(m_).length;       //model.data.;
+        	//int N = data.docs.get(m_).length;       //model.data().;
         	TIntHashSet givenDoc = new TIntHashSet();
         	for (int n = 0; n < N; n++){       		
         		//Fix
@@ -373,7 +390,7 @@ public class Coherence {
 			//Topic Loop
 			int[] indices = topicTopWords[topic];
 			Coherence[topic]=0;
-            for (int m = 0; m < model.data.size(); m++){
+            for (int m = 0; m < model.data().size(); m++){
             	//Document Loop Within Topic
             	TIntHashSet supportedWords = docWordSets[m];
 	            for (int i = 0; i < numTopWords; i++) {
@@ -409,8 +426,8 @@ public class Coherence {
 					}
 				}// end inner loop
             }// end outer loop over top topic words to get to coherence
-            String FirstWord = (String) model.alphabet.lookupObject(indices[MaxWordPair_1]) ; //data.localDict.getWord(indices[MaxWordPair_1]);
-            String SecondWord = (String) model.alphabet.lookupObject(indices[MaxWordPair_2]); //data.localDict.getWord(indices[MaxWordPair_2]);
+            String FirstWord = (String) model.alphabet().lookupObject(indices[MaxWordPair_1]) ; //data.localDict.getWord(indices[MaxWordPair_1]);
+            String SecondWord = (String) model.alphabet().lookupObject(indices[MaxWordPair_2]); //data.localDict.getWord(indices[MaxWordPair_2]);
             
             System.out.println(topic+","+ FirstWord+":"+SecondWord + "," +Coherence[topic]+ "," +  distFromUniform[topic] +","+ topicCodocumentMatrices[topic][MaxWordPair_1][MaxWordPair_2] );
             cohereResults[topic+1]=(String.valueOf(topic)+","+ FirstWord+":"+SecondWord + "," +String.valueOf(Coherence[topic])+ "," +  String.valueOf(distFromUniform[topic]) +","+ String.valueOf(topicCodocumentMatrices[topic][MaxWordPair_1][MaxWordPair_2])  ).split(",");

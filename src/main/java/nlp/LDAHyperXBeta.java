@@ -1,6 +1,7 @@
 package nlp;
 
 import cc.mallet.topics.LDAHyper;
+import cc.mallet.types.*;
 import gnu.trove.TIntIntHashMap;
 
 import java.io.FileWriter;
@@ -11,12 +12,6 @@ import java.util.List;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import cc.mallet.topics.LDAHyper.Topication;
-import cc.mallet.types.Dirichlet;
-import cc.mallet.types.FeatureSequence;
-import cc.mallet.types.IDSorter;
-import cc.mallet.types.Instance;
-import cc.mallet.types.InstanceList;
-import cc.mallet.types.LabelSequence;
 import cc.mallet.util.Randoms;
 
 
@@ -72,7 +67,7 @@ public class LDAHyperXBeta extends LDAHyper {
                 //System.out.println(item+" : "+alphabet.lookupObject(typeID));
 
                 tokensPerTopic[0] +=pseudoCount;
-                getTypeTopicCounts()[typeID].adjustOrPutValue(0, pseudoCount, pseudoCount);
+                typeTopicCounts[typeID].adjustOrPutValue(0, pseudoCount, pseudoCount);
             }
             //typeTopicCounts[typeID].adjustOrPutValue(0, pseudoCount, pseudoCount);
         }
@@ -396,7 +391,7 @@ public class LDAHyperXBeta extends LDAHyper {
             LabelSequence topicSequence = t.topicSequence;
             for (int pi = 0; pi < topicSequence.getLength(); pi++) {
                 int topic = topicSequence.getIndexAtPosition(pi);
-                getTypeTopicCounts()[tokenSequence.getIndexAtPosition(pi)].adjustOrPutValue(topic, 1, 1);
+                typeTopicCounts[tokenSequence.getIndexAtPosition(pi)].adjustOrPutValue(topic, 1, 1);
                 tokensPerTopic[topic]++;
                 typeTotals[tokenSequence.getIndexAtPosition(pi)]++;
             }
@@ -713,7 +708,7 @@ public class LDAHyperXBeta extends LDAHyper {
             //System.out.println(type);
             oldTopic = oneDocTopics[position];
 
-            currentTypeTopicCounts = getTypeTopicCounts()[type];
+            currentTypeTopicCounts = typeTopicCounts[type];
             //System.out.println("typeTopicCounts" + typeTopicCounts[type].get(oldTopic) );
             //currentTypeTopicCounts.adjustValue(oldTopic, -1);
             //System.out.println("CurrenttypeTopicCounts" + currentTypeTopicCounts.get(oldTopic) );
@@ -941,7 +936,7 @@ public class LDAHyperXBeta extends LDAHyper {
 
             oldTopic = oneDocTopics[position];
 
-            currentTypeTopicCounts = getTypeTopicCounts()[type];
+            currentTypeTopicCounts = typeTopicCounts[type];
             assert(currentTypeTopicCounts.get(oldTopic) >= 0);
 
             //	Remove this token from all counts.
@@ -1134,7 +1129,7 @@ public class LDAHyperXBeta extends LDAHyper {
 
         int index;
         for (int type = 0; type < numTypes; type++) {
-            int[] counts = getTypeTopicCounts()[type].getValues();
+            int[] counts = typeTopicCounts[type].getValues();
 
 
             index = 0;
@@ -1177,6 +1172,41 @@ public class LDAHyperXBeta extends LDAHyper {
         beta = betaSum / numTypes;
 
         System.out.println("new Beta: " +beta);
+
+    }
+
+    private void initializeForTypes(Alphabet alphabet) {
+        if (this.alphabet == null) {
+            this.alphabet = alphabet;
+            this.numTypes = alphabet.size();
+            this.typeTopicCounts = new TIntIntHashMap[this.numTypes];
+
+            for(int fi = 0; fi < this.numTypes; ++fi) {
+                this.typeTopicCounts[fi] = new TIntIntHashMap();
+            }
+
+            this.betaSum = this.beta * (double)this.numTypes;
+        } else {
+            if (alphabet != this.alphabet) {
+                throw new IllegalArgumentException("Cannot change Alphabet.");
+            }
+
+            if (alphabet.size() != this.numTypes) {
+                this.numTypes = alphabet.size();
+                TIntIntHashMap[] newTypeTopicCounts = new TIntIntHashMap[this.numTypes];
+
+                int i;
+                for(i = 0; i < this.typeTopicCounts.length; ++i) {
+                    newTypeTopicCounts[i] = this.typeTopicCounts[i];
+                }
+
+                for(i = this.typeTopicCounts.length; i < this.numTypes; ++i) {
+                    newTypeTopicCounts[i] = new TIntIntHashMap();
+                }
+
+                this.betaSum = this.beta * (double)this.numTypes;
+            }
+        }
 
     }
 
